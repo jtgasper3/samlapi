@@ -8,7 +8,7 @@ require 'base64'
 require 'highline'
 require 'json'
 
-BASE_URL = 'https://shibidp.cit.cornell.edu/idp/profile/SAML2/Unsolicited/SSO?providerId=urn:amazon:webservices'.freeze
+BASE_URL = 'https://idp.gatech.edu/idp/profile/SAML2/Unsolicited/SSO?providerId=urn:amazon:webservices'.freeze
 AWS_ROLE = 'https://aws.amazon.com/SAML/Attributes/Role'.freeze
 AWS_CONFIG_FILE = '/.aws/credentials'.freeze
 REGION = 'us-east-1'.freeze
@@ -26,13 +26,19 @@ driver = Selenium::WebDriver.for :firefox
 driver.navigate.to BASE_URL
 
 wait = Selenium::WebDriver::Wait.new(timeout: 30) # seconds
-wait.until { driver.find_element(id: 'netid') }
+wait.until { driver.find_element(id: 'username') }
 
-element = driver.find_element(:id, 'netid')
+puts "Found the authn server\n"
+
+element = driver.find_element(:id, 'username')
 element.send_keys netid
+
 element = driver.find_element(:id, 'password')
 element.send_keys password
-element.submit
+
+driver.find_element(:name, 'submit').click
+
+puts "Submitting credentials\n"
 
 sleep 5
 
@@ -40,6 +46,8 @@ wait.until { driver.find_element(id: 'duo_iframe') }
 driver.switch_to.frame 'duo_iframe'
 wait.until { driver.find_element(name: 'passcode') }
 driver.find_element(:css, 'button.positive.auth-button').click
+
+puts "Triggering Duo Push\n\n"
 
 driver.switch_to.default_content
 wait.until { driver.find_element(name: 'SAMLResponse') }

@@ -1,15 +1,19 @@
-FROM cucloudcollab/xvfb-firefox
+FROM cucloudcollab/xvfb-firefox:046a672383404ba62dcf5fd40b735221cea05f3d
 
 MAINTAINER Shawn Bower shawn.bower@gmail.com
+MAINTAINER John Gasper jgasper@unicon.net
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
   zlib1g-dev \
   ruby \
-  ruby-dev && \
+  ruby-dev \
+  libxslt-dev \
+  libxml2-dev && \
   rm -rf /var/lib/apt/lists/*
 
+RUN gem install aws-sdk
+
 RUN gem install selenium-webdriver \
-  aws-sdk \
   highline \
   parseconfig \
   json \
@@ -18,3 +22,4 @@ RUN gem install selenium-webdriver \
 COPY bin/ /opt
 
 ENTRYPOINT ["/opt/start-saml-api.sh"]
+
