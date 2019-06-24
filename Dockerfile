@@ -11,9 +11,11 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   libxml2-dev && \
   rm -rf /var/lib/apt/lists/*
 
-RUN gem install aws-sdk
+RUN gem install --no-ri --no-rdoc aws-sdk
 
-RUN gem install selenium-webdriver \
+RUN gem install --no-ri --no-rdoc rake
+
+RUN gem install --no-ri --no-rdoc selenium-webdriver \
   highline \
   parseconfig \
   json \
